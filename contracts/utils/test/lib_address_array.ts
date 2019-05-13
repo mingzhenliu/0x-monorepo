@@ -23,6 +23,11 @@ describe('LibAddressArray', () => {
 
     before(async () => {
         await blockchainLifecycle.startAsync();
+    });
+    after(async () => {
+        await blockchainLifecycle.revertAsync();
+    });
+    before(async () => {
         // Deploy LibAddressArray
         lib = await TestLibAddressArrayContract.deployFrom0xArtifactAsync(
             artifacts.TestLibAddressArray,
@@ -30,7 +35,10 @@ describe('LibAddressArray', () => {
             txDefaults,
         );
     });
-    after(async () => {
+    beforeEach(async () => {
+        await blockchainLifecycle.startAsync();
+    });
+    afterEach(async () => {
         await blockchainLifecycle.revertAsync();
     });
 

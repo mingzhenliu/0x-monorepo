@@ -33,13 +33,16 @@ contract ERC1155 is
     using Address for address;
 
     // selectors for receiver callbacks
+    /// 接收合约要实现的methodID
     bytes4 constant public ERC1155_RECEIVED       = 0xf23a6e61;
     bytes4 constant public ERC1155_BATCH_RECEIVED = 0xbc197c81;
 
     // id => (owner => balance)
+    /// tokenid 到拥有者 到余额的映射，（NFTS 余额为1） 
     mapping (uint256 => mapping(address => uint256)) internal balances;
 
     // owner => (operator => approved)
+    /// 许可标志，这里只有全部许可
     mapping (address => mapping(address => bool)) internal operatorApproval;
 
     /// @notice Transfers value amount of an _id from the _from address to the _to address specified.

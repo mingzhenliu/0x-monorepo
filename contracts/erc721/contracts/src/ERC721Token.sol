@@ -32,15 +32,19 @@ contract ERC721Token is
     bytes4 constant internal ERC721_RECEIVED = bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"));
 
     // Mapping of tokenId => owner
+    /// token的拥有者对应关系
     mapping (uint256 => address) internal owners;
 
     // Mapping of tokenId => approved address
+    /// 单个许可
     mapping (uint256 => address) internal approvals;
 
     // Mapping of owner => number of tokens owned
+    /// 余额，拥有token的个数
     mapping (address => uint256) internal balances;
 
     // Mapping of owner => operator => approved
+    /// 全量许可
     mapping (address => mapping (address => bool)) internal operatorApprovals;
 
     /// @notice Transfers the ownership of an NFT from one address to another address
@@ -73,6 +77,7 @@ contract ERC721Token is
         assembly {
             receiverCodeSize := extcodesize(_to)
         }
+        /// 如果接收的是合约必须实现接收接口，防止转入无效合约，丢失token
         if (receiverCodeSize > 0) {
             bytes4 selector = IERC721Receiver(_to).onERC721Received(
                 msg.sender,
@@ -212,12 +217,13 @@ contract ERC721Token is
         address spender = msg.sender;
         address approvedAddress = getApproved(_tokenId);
         require(
-            spender == owner ||
-            isApprovedForAll(owner, spender) ||
-            approvedAddress == spender,
+            spender == owner ||         /// 本人拥有
+            isApprovedForAll(owner, spender) || /// 全量许可
+            approvedAddress == spender,   ///单个许可
             "ERC721_INVALID_SPENDER"
         );
 
+        /// 修改许可
         if (approvedAddress != address(0)) {
             approvals[_tokenId] = address(0);
         }

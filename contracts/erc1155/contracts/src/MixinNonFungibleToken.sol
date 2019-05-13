@@ -26,15 +26,19 @@ contract MixinNonFungibleToken is
 {
     /// Use a split bit implementation.
     /// Store the type in the upper 128 bits..
+    /// 非同质化token 基础类型
     uint256 constant internal TYPE_MASK = uint256(uint128(~0)) << 128;
 
     /// ..and the non-fungible index in the lower 128
+    /// 非同质化token index掩码
     uint256 constant internal NF_INDEX_MASK = uint128(~0);
 
     /// The top bit is a flag to tell if this is a NFI.
+    /// 是否为非同质化token掩码
     uint256 constant internal TYPE_NF_BIT = 1 << 255;
 
     /// mapping of nft to owner
+    /// 非同质化token对应拥有者映射关系
     mapping (uint256 => address) internal nfOwners;
 
     /// @dev Returns true if token is non-fungible
