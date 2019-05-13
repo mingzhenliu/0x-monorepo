@@ -21,7 +21,9 @@ pragma solidity ^0.5.5;
 import "@0x/contracts-utils/contracts/src/SafeMath.sol";
 import "./UnlimitedAllowanceERC20Token.sol";
 
-
+// 铸造
+// 这里应该是没有用到，要不然的话没有权限控制，会乱透了
+// 要不就是继承后再改写此接口，变成有权限
 contract MintableERC20Token is 
     SafeMath,
     UnlimitedAllowanceERC20Token
@@ -29,6 +31,7 @@ contract MintableERC20Token is
     /// @dev Mints new tokens
     /// @param _to Address of the beneficiary that will own the minted token
     /// @param _value Amount of tokens to mint
+    // 增发
     function _mint(address _to, uint256 _value)
         internal
     {
@@ -45,6 +48,7 @@ contract MintableERC20Token is
     /// @dev Mints new tokens
     /// @param _owner Owner of tokens that will be burned
     /// @param _value Amount of tokens to burn
+    /// 减少
     function _burn(address _owner, uint256 _value)
         internal
     {

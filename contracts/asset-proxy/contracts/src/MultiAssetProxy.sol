@@ -30,6 +30,7 @@ contract MultiAssetProxy is
     bytes4 constant internal PROXY_ID = bytes4(keccak256("MultiAsset(uint256[],bytes[])"));
 
     // solhint-disable-next-line payable-fallback
+    // 默认函数
     function ()
         external
     {
@@ -38,6 +39,7 @@ contract MultiAssetProxy is
         // expensive and we therefore do not check for overflows in these scenarios.
         assembly {
             // The first 4 bytes of calldata holds the function selector
+            // 按照ABI规则，用前4Bytes来选择函数
             let selector := and(calldataload(0), 0xffffffff00000000000000000000000000000000000000000000000000000000)
 
             // `transferFrom` will be called with the following parameters:
@@ -46,6 +48,7 @@ contract MultiAssetProxy is
             // to Address to transfer asset to.
             // amount Amount of asset to transfer.
             // bytes4(keccak256("transferFrom(bytes,address,address,uint256)")) = 0xa85e59e4
+            // 构造交易发送
             if eq(selector, 0xa85e59e400000000000000000000000000000000000000000000000000000000) {
 
                 // To lookup a value in a mapping, we load from the storage location keccak256(k, p),

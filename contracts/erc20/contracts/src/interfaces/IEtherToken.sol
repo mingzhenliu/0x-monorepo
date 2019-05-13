@@ -20,14 +20,15 @@ pragma solidity ^0.5.5;
 
 import "./IERC20Token.sol";
 
-
+/// 以太坊的中转封装合约，例如WETH，存入多少以太坊就可以取出多少WETH。退出多少WETH就可以拿出多少以太坊
 contract IEtherToken is
     IERC20Token
 {
+  //存款
     function deposit()
         public
         payable;
-    
+  //退出 
     function withdraw(uint256 amount)
         public;
 }

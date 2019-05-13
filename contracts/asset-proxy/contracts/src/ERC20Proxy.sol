@@ -130,6 +130,7 @@ contract ERC20Proxy is
                 calldatacopy(4, 36, 96)
 
                 /////// Call `token.transferFrom` using the calldata ///////
+                // https://solidity.readthedocs.io/en/v0.5.5/assembly.html
                 let success := call(
                     gas,            // forward all gas
                     token,          // call address of token contract

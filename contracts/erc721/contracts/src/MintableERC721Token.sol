@@ -24,10 +24,12 @@ import "./ERC721Token.sol";
 contract MintableERC721Token is
     ERC721Token
 {
+    
     /// @dev Function to mint a new token
     ///      Reverts if the given token ID already exists
     /// @param _to Address of the beneficiary that will own the minted token
-    /// @param _tokenId ID of the token to be minted by the msg.sender    
+    /// @param _tokenId ID of the token to be minted by the msg.sender
+    /// 铸造，正式环境需要能够权限控制    
     function _mint(address _to, uint256 _tokenId)
         internal
     {
@@ -56,6 +58,7 @@ contract MintableERC721Token is
     ///      Reverts if the given token ID doesn't exist
     /// @param _owner Owner of token with given token ID
     /// @param _tokenId ID of the token to be burned by the msg.sender
+    /// 销毁，需要权限控制
     function _burn(address _owner, uint256 _tokenId)
         internal
     {

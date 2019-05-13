@@ -33,6 +33,7 @@ contract MixinAssetProxyDispatcher is
     /// @dev Registers an asset proxy to its asset proxy id.
     ///      Once an asset proxy is registered, it cannot be unregistered.
     /// @param assetProxy Address of new asset proxy to register.
+    /// 注册proxy，例如ERC20
     function registerAssetProxy(address assetProxy)
         external
         onlyOwner
@@ -69,6 +70,7 @@ contract MixinAssetProxyDispatcher is
     /// @param from Address to transfer token from.
     /// @param to Address to transfer token to.
     /// @param amount Amount of token to transfer.
+    /// 总的proxy入口，然后分流到各个proxy，各个proxy然后分到token
     function dispatchTransferFrom(
         bytes memory assetData,
         address from,

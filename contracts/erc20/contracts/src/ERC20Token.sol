@@ -24,9 +24,12 @@ import "./interfaces/IERC20Token.sol";
 contract ERC20Token is
     IERC20Token
 {
+    // 余额
     mapping (address => uint256) internal balances;
+    // 允许转账额度
     mapping (address => mapping (address => uint256)) internal allowed;
 
+    //总发行量
     uint256 internal _totalSupply;
 
     /// @dev send `value` token to `to` from `msg.sender`

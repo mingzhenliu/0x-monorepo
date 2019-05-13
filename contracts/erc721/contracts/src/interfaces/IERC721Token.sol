@@ -18,6 +18,7 @@
 
 pragma solidity ^0.5.5;
 
+///NFTs，多翻译为非同质代币
 
 contract IERC721Token {
 
@@ -62,6 +63,13 @@ contract IERC721Token {
     /// @param _to The new owner
     /// @param _tokenId The NFT to transfer
     /// @param _data Additional data with no specified format, sent in call to `_to`
+    /// 转移NFT所有权，一次成功的转移操作必须发起 Transer 事件。函数的实现需要做一下几种检查：
+    /// 1、调用者msg.sender应该是当前tokenId的所有者或被授权的地址
+    /// 2、_from 必须是 _tokenId的所有者
+    /// 3、_tokenId 应该是当前合约正在监测的NFTs 中的任何一个
+    /// 4、_to 地址不应该为 0
+    /// 5、如果_to 是一个合约应该调用其onERC721Received方法
+    ///    并且检查其返回值，如果返回值不为bytes4(keccak256("onERC721Received(address,uint256,bytes)"))抛出异常。
     function safeTransferFrom(
         address _from,
         address _to,
@@ -89,6 +97,7 @@ contract IERC721Token {
     ///      operator of the current owner.
     /// @param _approved The new approved NFT controller
     /// @param _tokenId The NFT to approve
+    /// 授予地址_to具有_tokenId的控制权，方法成功后需触发Approval 事件。
     function approve(address _approved, uint256 _tokenId)
         external;
 
@@ -98,6 +107,7 @@ contract IERC721Token {
     ///      multiple operators per owner.
     /// @param _operator Address to add to the set of authorized operators
     /// @param _approved True if the operator is approved, false to revoke approval
+    /// 授予地址_operator具有所有NFTs的控制权，成功后需触发ApprovalForAll事件。
     function setApprovalForAll(address _operator, bool _approved)
         external;
 
@@ -106,6 +116,7 @@ contract IERC721Token {
     ///      function throws for queries about the zero address.
     /// @param _owner An address for whom to query the balance
     /// @return The number of NFTs owned by `_owner`, possibly zero
+    /// 返回由_owner 持有的NFTs的数量
     function balanceOf(address _owner)
         external
         view
@@ -121,6 +132,7 @@ contract IERC721Token {
     /// @param _from The current owner of the NFT
     /// @param _to The new owner
     /// @param _tokenId The NFT to transfer
+    /// 用来转移NFTs, 方法成功后需触发Transfer事件。调用者自己确认_to地址能正常接收NFT，否则将丢失此NFT。
     function transferFrom(
         address _from,
         address _to,
@@ -133,6 +145,7 @@ contract IERC721Token {
     ///      about them do throw.
     /// @param _tokenId The identifier for an NFT
     /// @return The address of the owner of the NFT
+    /// tokenId代币持有者的地址
     function ownerOf(uint256 _tokenId)
         public
         view
@@ -151,6 +164,7 @@ contract IERC721Token {
     /// @param _owner The address that owns the NFTs
     /// @param _operator The address that acts on behalf of the owner
     /// @return True if `_operator` is an approved operator for `_owner`, false otherwise
+    /// 授予地址_operator具有所有NFTs的控制权，成功后需触发ApprovalForAll事件。
     function isApprovedForAll(address _owner, address _operator)
         public
         view

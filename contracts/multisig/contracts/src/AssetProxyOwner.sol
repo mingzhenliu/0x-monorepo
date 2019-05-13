@@ -21,7 +21,7 @@ pragma solidity 0.4.24;
 import "./MultiSigWalletWithTimeLock.sol";
 import "@0x/contracts-utils/contracts/src/LibBytes.sol";
 
-
+/// 这里其实就是：AssetProxy是用多签钱包来保证安全的
 contract AssetProxyOwner is
     MultiSigWalletWithTimeLock
 {

@@ -154,6 +154,9 @@ contract MixinAssetProxyDispatcher is
                 }
 
                 /////// Call `assetProxy.transferFrom` using the constructed calldata ///////
+                // call contract at address a with input mem[in…(in+insize)) providing g gas 
+                // and v wei and output area mem[out…(out+outsize)) 
+                // returning 0 on error (eg. out of gas) and 1 on success
                 let success := call(
                     gas,                    // forward all gas
                     assetProxy,             // call address of asset proxy

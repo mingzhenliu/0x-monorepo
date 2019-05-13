@@ -30,6 +30,7 @@ library LibAddressArray {
     /// @param addressArray Array of addresses.
     /// @param addressToAppend  Address to append.
     /// @return Array of addresses: [... addressArray, addressToAppend]
+    /// 地址数组增加一个地址到数组
     function append(address[] memory addressArray, address addressToAppend)
         internal
         pure
@@ -88,6 +89,7 @@ library LibAddressArray {
     /// @param addressArray Array of addresses.
     /// @param target Address to search for in array.
     /// @return True if the addressArray contains the target.
+    /// 地址数组是否包含某个地址
     function contains(address[] memory addressArray, address target)
         internal
         pure
@@ -124,6 +126,7 @@ library LibAddressArray {
     /// @param addressArray Array of addresses.
     /// @param target Address to search for in array.
     /// @return Existence and index of the target in the array.
+    /// 地址数组是否包含某个地址，如果包含返回一个index
     function indexOf(address[] memory addressArray, address target)
         internal
         pure

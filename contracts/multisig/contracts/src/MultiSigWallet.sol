@@ -1,6 +1,7 @@
 // solhint-disable
 pragma solidity ^0.4.15;
 
+/// 可以参考文章https://www.bokconsulting.com.au/blog/guide-to-using-the-gnosis-multisig-wallet/
 
 /// @title Multisignature wallet - Allows multiple parties to agree on transactions before execution.
 /// @author Stefan George - <stefan.george@consensys.net>
@@ -93,6 +94,7 @@ contract MultiSigWallet {
     }
 
     /// @dev Fallback function allows to deposit ether.
+    /// 允许转账
     function()
         payable
     {
@@ -106,6 +108,7 @@ contract MultiSigWallet {
     /// @dev Contract constructor sets initial owners and required number of confirmations.
     /// @param _owners List of initial owners.
     /// @param _required Number of required confirmations.
+    /// 初始化多签钱包
     function MultiSigWallet(address[] _owners, uint _required)
         public
         validRequirement(_owners.length, _required)
@@ -120,6 +123,7 @@ contract MultiSigWallet {
 
     /// @dev Allows to add a new owner. Transaction has to be sent by wallet.
     /// @param owner Address of new owner.
+    /// 增加签名者
     function addOwner(address owner)
         public
         onlyWallet
@@ -134,6 +138,7 @@ contract MultiSigWallet {
 
     /// @dev Allows to remove an owner. Transaction has to be sent by wallet.
     /// @param owner Address of owner.
+    /// 删除签名者
     function removeOwner(address owner)
         public
         onlyWallet
@@ -154,6 +159,7 @@ contract MultiSigWallet {
     /// @dev Allows to replace an owner with a new owner. Transaction has to be sent by wallet.
     /// @param owner Address of owner to be replaced.
     /// @param newOwner Address of new owner.
+    /// 替换签名者
     function replaceOwner(address owner, address newOwner)
         public
         onlyWallet
@@ -173,6 +179,7 @@ contract MultiSigWallet {
 
     /// @dev Allows to change the number of required confirmations. Transaction has to be sent by wallet.
     /// @param _required Number of required confirmations.
+    /// 修改门限
     function changeRequirement(uint _required)
         public
         onlyWallet
@@ -187,6 +194,7 @@ contract MultiSigWallet {
     /// @param value Transaction ether value.
     /// @param data Transaction data payload.
     /// @return Returns transaction ID.
+    /// 提交交易
     function submitTransaction(address destination, uint value, bytes data)
         public
         returns (uint transactionId)
@@ -197,6 +205,7 @@ contract MultiSigWallet {
 
     /// @dev Allows an owner to confirm a transaction.
     /// @param transactionId Transaction ID.
+    /// 确认交易
     function confirmTransaction(uint transactionId)
         public
         ownerExists(msg.sender)
@@ -210,6 +219,7 @@ contract MultiSigWallet {
 
     /// @dev Allows an owner to revoke a confirmation for a transaction.
     /// @param transactionId Transaction ID.
+    /// 撤销交易确认
     function revokeConfirmation(uint transactionId)
         public
         ownerExists(msg.sender)
@@ -222,6 +232,7 @@ contract MultiSigWallet {
 
     /// @dev Allows anyone to execute a confirmed transaction.
     /// @param transactionId Transaction ID.
+    /// 执行交易
     function executeTransaction(uint transactionId)
         public
         ownerExists(msg.sender)
@@ -265,6 +276,7 @@ contract MultiSigWallet {
     /// @dev Returns the confirmation status of a transaction.
     /// @param transactionId Transaction ID.
     /// @return Confirmation status.
+    /// 是否收集到门限个签名
     function isConfirmed(uint transactionId)
         public
         constant
@@ -287,6 +299,7 @@ contract MultiSigWallet {
     /// @param value Transaction ether value.
     /// @param data Transaction data payload.
     /// @return Returns transaction ID.
+    /// 添加交易
     function addTransaction(address destination, uint value, bytes data)
         internal
         notNull(destination)
@@ -336,6 +349,7 @@ contract MultiSigWallet {
 
     /// @dev Returns list of owners.
     /// @return List of owner addresses.
+    /// 签名列表
     function getOwners()
         public
         constant

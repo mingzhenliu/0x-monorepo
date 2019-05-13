@@ -49,11 +49,13 @@ contract MixinExchangeCore is
 
     // Mapping of makerAddress => senderAddress => lowest salt an order can have in order to be fillable
     // Orders with specified senderAddress and with a salt less than their epoch are considered cancelled
+    // 有点像时间戳
     mapping (address => mapping (address => uint256)) public orderEpoch;
 
     /// @dev Cancels all orders created by makerAddress with a salt less than or equal to the targetOrderEpoch
     ///      and senderAddress equal to msg.sender (or null address if msg.sender == makerAddress).
     /// @param targetOrderEpoch Orders created with a salt less or equal to this value will be cancelled.
+    // 有了新的订单，老的订单自动取消
     function cancelOrdersUpTo(uint256 targetOrderEpoch)
         external
         nonReentrant
@@ -68,6 +70,7 @@ contract MixinExchangeCore is
         uint256 oldOrderEpoch = orderEpoch[makerAddress][senderAddress];
 
         // Ensure orderEpoch is monotonically increasing
+        // 單調递增
         require(
             newOrderEpoch > oldOrderEpoch, 
             "INVALID_NEW_ORDER_EPOCH"
@@ -207,6 +210,7 @@ contract MixinExchangeCore is
         uint256 takerAssetFilledAmount = min256(takerAssetFillAmount, remainingTakerAssetAmount);
 
         // Validate context
+        // 判断有效性
         assertValidFill(
             order,
             orderInfo,
@@ -228,6 +232,7 @@ contract MixinExchangeCore is
         );
     
         // Settle order
+        // 实际处理订单
         settleOrder(
             order,
             takerAddress,
@@ -493,6 +498,7 @@ contract MixinExchangeCore is
     /// @param order Order struct containing order specifications.
     /// @param takerAddress Address selling takerAsset and buying makerAsset.
     /// @param fillResults Amounts to be filled and fees paid by maker and taker.
+    //一次撮合四个转账
     function settleOrder(
         LibOrder.Order memory order,
         address takerAddress,

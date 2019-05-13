@@ -35,6 +35,7 @@ contract MAssetProxyDispatcher is
     /// @param from Address to transfer token from.
     /// @param to Address to transfer token to.
     /// @param amount Amount of token to transfer.
+    /// 发送给各个assetProxy
     function dispatchTransferFrom(
         bytes memory assetData,
         address from,

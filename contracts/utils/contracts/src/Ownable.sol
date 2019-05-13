@@ -2,7 +2,7 @@ pragma solidity ^0.5.5;
 
 import "./interfaces/IOwnable.sol";
 
-
+/// 权限接口，允许权限转移
 contract Ownable is
     IOwnable
 {

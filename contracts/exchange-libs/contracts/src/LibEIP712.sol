@@ -18,6 +18,7 @@
 
 pragma solidity ^0.5.5;
 
+/// https://eips.ethereum.org/EIPS/eip-712
 
 contract LibEIP712 {
 

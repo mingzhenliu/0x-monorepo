@@ -29,7 +29,8 @@ contract MultiSigWalletWithTimeLock is
 {
     event ConfirmationTimeSet(uint256 indexed transactionId, uint256 confirmationTime);
     event TimeLockChange(uint256 secondsTimeLocked);
-
+    
+    /// 多长时间内确认
     uint256 public secondsTimeLocked;
 
     mapping (uint256 => uint256) public confirmationTimes;
@@ -50,6 +51,7 @@ contract MultiSigWalletWithTimeLock is
         _;
     }
 
+    /// 区块链的块时间，矿工是可以造假的，所以这里的安全性是不是足够
     modifier pastTimeLock(uint256 transactionId) {
         require(
             block.timestamp >= confirmationTimes[transactionId] + secondsTimeLocked,

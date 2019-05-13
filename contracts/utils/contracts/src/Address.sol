@@ -30,6 +30,7 @@ library Address {
      * as the code is not actually created until after the constructor finishes.
      * @param account address of the account to check
      * @return whether the target address is a contract
+     * 是否为合约，就是取合约的bin 
      */
     function isContract(address account) internal view returns (bool) {
         uint256 size;

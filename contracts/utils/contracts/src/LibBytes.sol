@@ -28,6 +28,7 @@ library LibBytes {
     /// @return memoryAddress Memory address of byte array. This
     ///         points to the header of the byte array which contains
     ///         the length.
+    /// 获取字节数组的内存地址
     function rawAddress(bytes memory input)
         internal
         pure
@@ -42,6 +43,7 @@ library LibBytes {
     /// @dev Gets the memory address for the contents of a byte array.
     /// @param input Byte array to lookup.
     /// @return memoryAddress Memory address of the contents of the byte array.
+    /// 字节数组内容的内存地址（前面有个偏移量）
     function contentAddress(bytes memory input)
         internal
         pure
@@ -57,6 +59,7 @@ library LibBytes {
     /// @param dest memory address to copy bytes to.
     /// @param source memory address to copy bytes from.
     /// @param length number of bytes to copy.
+    /// 内存内容拷贝，安装32bytes对齐
     function memCopy(
         uint256 dest,
         uint256 source,
@@ -165,6 +168,7 @@ library LibBytes {
     /// @param from The starting index for the slice (inclusive).
     /// @param to The final index for the slice (exclusive).
     /// @return result The slice containing bytes at indices [from, to)
+    /// 剪切
     function slice(
         bytes memory b,
         uint256 from,
@@ -277,6 +281,7 @@ library LibBytes {
     /// @param lhs First byte array to compare.
     /// @param rhs Second byte array to compare.
     /// @return True if arrays are the same. False otherwise.
+    /// 省gas的比较方法
     function equals(
         bytes memory lhs,
         bytes memory rhs

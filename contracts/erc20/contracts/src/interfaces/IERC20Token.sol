@@ -38,6 +38,7 @@ contract IERC20Token {
     /// @param _to The address of the recipient
     /// @param _value The amount of token to be transferred
     /// @return True if transfer was successful
+    /// 转账
     function transfer(address _to, uint256 _value)
         external
         returns (bool);
@@ -47,6 +48,7 @@ contract IERC20Token {
     /// @param _to The address of the recipient
     /// @param _value The amount of token to be transferred
     /// @return True if transfer was successful
+    /// 从转账额度中转出金额
     function transferFrom(
         address _from,
         address _to,
@@ -59,12 +61,14 @@ contract IERC20Token {
     /// @param _spender The address of the account able to transfer the tokens
     /// @param _value The amount of wei to be approved for transfer
     /// @return Always true if the call has enough gas to complete execution
+    /// 同意_spender转账额度，注意是覆盖，不是累加
     function approve(address _spender, uint256 _value)
         external
         returns (bool);
 
     /// @dev Query total supply of token
     /// @return Total supply of token
+    /// 总的发行量
     function totalSupply()
         external
         view
@@ -72,6 +76,7 @@ contract IERC20Token {
     
     /// @param _owner The address from which the balance will be retrieved
     /// @return Balance of owner
+    /// 查余额
     function balanceOf(address _owner)
         external
         view
@@ -80,6 +85,7 @@ contract IERC20Token {
     /// @param _owner The address of the account owning tokens
     /// @param _spender The address of the account able to transfer the tokens
     /// @return Amount of remaining tokens allowed to spent
+    /// 查允许转账额
     function allowance(address _owner, address _spender)
         external
         view
