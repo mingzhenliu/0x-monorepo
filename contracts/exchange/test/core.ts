@@ -57,7 +57,8 @@ describe('Exchange core', () => {
     let owner: string;
     let takerAddress: string;
     let feeRecipientAddress: string;
-
+    /// 合约sol，经过工具生产abi和bin，然后通过abi文件可以生产相关的ts代码。
+    /// 0x相关的合约代码可以在这里看到。0x-monorepo\packages\abi-gen-wrappers\src\generated-wrappers
     let erc20TokenA: DummyERC20TokenContract;
     let erc20TokenB: DummyERC20TokenContract;
     let zrxToken: DummyERC20TokenContract;
@@ -99,6 +100,12 @@ describe('Exchange core', () => {
     });
     before(async () => {
         const accounts = await web3Wrapper.getAvailableAddressesAsync();
+        const accounts = await web3Wrapper.getAvailableAddressesAsync();
+        /// 调用eth_accounts取出四个账号，来做演示。
+        /// owner是拥有者，理解是exchange的主人（交易所主人）
+        /// makerAddress发单人
+        /// takerAddress收单人
+        /// feeRecipientAddress 中介费收费账户
         const usedAddresses = ([owner, makerAddress, takerAddress, feeRecipientAddress] = _.slice(accounts, 0, 4));
 
         erc20Wrapper = new ERC20Wrapper(provider, usedAddresses, owner);
@@ -106,6 +113,7 @@ describe('Exchange core', () => {
         erc1155ProxyWrapper = new ERC1155ProxyWrapper(provider, usedAddresses, owner);
 
         // Deploy AssetProxies, Exchange, tokens, and malicious contracts
+        /// 部署AssetProxies（合约部署） 
         erc20Proxy = await erc20Wrapper.deployProxyAsync();
         erc721Proxy = await erc721Wrapper.deployProxyAsync();
         multiAssetProxy = await MultiAssetProxyContract.deployFrom0xArtifactAsync(
@@ -113,26 +121,34 @@ describe('Exchange core', () => {
             provider,
             txDefaults,
         );
+
+        /// 部署了三个erc20 token
         const numDummyErc20ToDeploy = 3;
         [erc20TokenA, erc20TokenB, zrxToken] = await erc20Wrapper.deployDummyTokensAsync(
             numDummyErc20ToDeploy,
             constants.DUMMY_TOKEN_DECIMALS,
         );
+         /// 部署了三个erc721 token
         [erc721Token] = await erc721Wrapper.deployDummyTokensAsync();
+        
         erc1155Proxy = await erc1155ProxyWrapper.deployProxyAsync();
         [erc1155Wrapper] = await erc1155ProxyWrapper.deployDummyContractsAsync();
         erc1155Contract = erc1155Wrapper.getContract();
+
+
         exchange = await ExchangeContract.deployFrom0xArtifactAsync(
             artifacts.Exchange,
             provider,
             txDefaults,
             assetDataUtils.encodeERC20AssetData(zrxToken.address),
         );
+        
         maliciousWallet = maliciousValidator = await TestStaticCallReceiverContract.deployFrom0xArtifactAsync(
             artifacts.TestStaticCallReceiver,
             provider,
             txDefaults,
         );
+
         reentrantErc20Token = await ReentrantERC20TokenContract.deployFrom0xArtifactAsync(
             artifacts.ReentrantERC20Token,
             provider,
@@ -141,6 +157,7 @@ describe('Exchange core', () => {
         );
 
         // Configure ERC20Proxy
+        /// 添加权限，让那些合约地址可以调用，填的owner其实就是用owner的私钥来发这个交易
         await web3Wrapper.awaitTransactionSuccessAsync(
             await erc20Proxy.addAuthorizedAddress.sendTransactionAsync(exchange.address, {
                 from: owner,
@@ -155,6 +172,7 @@ describe('Exchange core', () => {
         );
 
         // Configure ERC721Proxy
+        /// 添加权限，让那些合约地址可以调用
         await web3Wrapper.awaitTransactionSuccessAsync(
             await erc721Proxy.addAuthorizedAddress.sendTransactionAsync(exchange.address, {
                 from: owner,
@@ -169,6 +187,7 @@ describe('Exchange core', () => {
         );
 
         // Configure ERC1155Proxy
+        /// 添加权限，让那些合约地址可以调用
         await web3Wrapper.awaitTransactionSuccessAsync(
             await erc1155Proxy.addAuthorizedAddress.sendTransactionAsync(exchange.address, {
                 from: owner,
@@ -183,6 +202,7 @@ describe('Exchange core', () => {
         );
 
         // Configure MultiAssetProxy
+        ///添加权限，让那些合约地址可以调用
         await web3Wrapper.awaitTransactionSuccessAsync(
             await multiAssetProxy.addAuthorizedAddress.sendTransactionAsync(exchange.address, {
                 from: owner,
@@ -203,17 +223,19 @@ describe('Exchange core', () => {
         );
 
         // Configure Exchange
+        /// 在exchange注册proxy
         exchangeWrapper = new ExchangeWrapper(exchange, provider);
         await exchangeWrapper.registerAssetProxyAsync(erc20Proxy.address, owner);
         await exchangeWrapper.registerAssetProxyAsync(erc721Proxy.address, owner);
         await exchangeWrapper.registerAssetProxyAsync(erc1155Proxy.address, owner);
         await exchangeWrapper.registerAssetProxyAsync(multiAssetProxy.address, owner);
 
+        /// 为了演示进行了一些余额和许可的设置
         // Configure ERC20 tokens
         await erc20Wrapper.setBalancesAndAllowancesAsync();
-
         // Configure ERC721 tokens
         await erc721Wrapper.setBalancesAndAllowancesAsync();
+
         const erc721Balances = await erc721Wrapper.getBalancesAsync();
         erc721MakerAssetIds = erc721Balances[makerAddress][erc721Token.address];
         erc721TakerAssetIds = erc721Balances[takerAddress][erc721Token.address];
@@ -236,6 +258,7 @@ describe('Exchange core', () => {
         });
 
         // Configure order defaults
+        /// 设置订单
         defaultMakerAssetAddress = erc20TokenA.address;
         defaultTakerAssetAddress = erc20TokenB.address;
         const defaultOrderParams = {
@@ -273,6 +296,7 @@ describe('Exchange core', () => {
                         constants.AWAIT_TRANSACTION_MINED_MS,
                     );
                     await expectTransactionFailedAsync(
+                        /// 完成交易
                         exchangeWrapper.fillOrderAsync(signedOrder, takerAddress),
                         RevertReason.TransferFailed,
                     );
@@ -354,6 +378,7 @@ describe('Exchange core', () => {
         });
 
         it('should not emit transfer events for transfers where from == to', async () => {
+            /// 传入的是maker地址，则失败
             const txReceipt = await exchangeWrapper.fillOrderAsync(signedOrder, makerAddress);
             const logs = txReceipt.logs;
             const transferLogs = _.filter(
@@ -447,6 +472,7 @@ describe('Exchange core', () => {
                 initialFeeRecipientZrxBalance.plus(signedOrder.makerFee.plus(signedOrder.takerFee)),
             );
         });
+
         it('should transfer the correct amounts when makerAssetAmount > takerAssetAmount', async () => {
             signedOrder = await orderFactory.newSignedOrderAsync({
                 makerAssetData: assetDataUtils.encodeERC20AssetData(noReturnErc20Token.address),
@@ -524,7 +550,7 @@ describe('Exchange core', () => {
             erc20Balances = await erc20Wrapper.getBalancesAsync();
             signedOrder = await orderFactory.newSignedOrderAsync();
         });
-
+        /// 只有本人才能取消订单
         it('should throw if not sent by maker', async () => {
             return expectTransactionFailedAsync(
                 exchangeWrapper.cancelOrderAsync(signedOrder, takerAddress),
@@ -532,6 +558,7 @@ describe('Exchange core', () => {
             );
         });
 
+        /// 
         it('should throw if makerAssetAmount is 0', async () => {
             signedOrder = await orderFactory.newSignedOrderAsync({
                 makerAssetAmount: new BigNumber(0),
@@ -564,6 +591,7 @@ describe('Exchange core', () => {
             );
         });
 
+        ///正确取消订单，有日志记录
         it('should log 1 event with correct arguments', async () => {
             const res = await exchangeWrapper.cancelOrderAsync(signedOrder, makerAddress);
             expect(res.logs).to.have.length(1);
@@ -705,10 +733,11 @@ describe('Exchange core', () => {
         });
     });
 
+    /// 签名是erc20交易，这里是erc721交易
     describe('Testing Exchange of ERC721 Tokens', () => {
         it('should throw when maker does not own the token with id makerAssetId', async () => {
             // Construct Exchange parameters
-            const makerAssetId = erc721TakerAssetIds[0];
+            const makerAssetId = erc721TakerAssetIds[0];/// 这里赋值错误
             const takerAssetId = erc721TakerAssetIds[1];
             signedOrder = await orderFactory.newSignedOrderAsync({
                 makerAssetAmount: new BigNumber(1),
